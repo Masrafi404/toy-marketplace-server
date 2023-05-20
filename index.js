@@ -29,11 +29,38 @@ async function run() {
         await client.connect();
 
         const tabsProductCollection = client.db('tabsDB').collection('tabsProducts')
+
+        const ProductCollection = client.db('ToyDB').collection('addToys')
+
         app.get('/tabs', async (req, res) => {
             const result = await tabsProductCollection.find().toArray();
             res.send(result)
         })
 
+        // add toy
+        app.post('/addToy', async (req, res) => {
+            const toy = req.body;
+            const result = await ProductCollection.insertOne(toy)
+            console.log(toy)
+            res.send(result)
+        })
+
+        app.get('/allToy', async (req, res) => {
+            const cursor = ProductCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        // specific email get data
+
+        app.get('/currentUD', async (req, res) => {
+            let query = {}
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail }
+            }
+            const result = await ProductCollection.find(query).toArray()
+            res.send(result)
+        })
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
