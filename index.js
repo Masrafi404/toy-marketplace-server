@@ -11,7 +11,7 @@ app.use(express.json())
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_Pass}@cluster0.icictvn.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -61,6 +61,33 @@ async function run() {
             const result = await ProductCollection.find(query).toArray()
             res.send(result)
         })
+
+        // my data update
+        app.put('/toy/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updatedToy = req.body;
+
+            const toy = {
+                $set: {
+                    toyPrice: updatedToy.uPrice,
+                    AvailableQuantity: updatedToy.uQuantity,
+                    toyDescription: updatedToy.uDescription
+                }
+            }
+            const result = await ProductCollection.updateOne(filter, toy, options);
+            res.send(result);
+        })
+        // delete operation
+
+        app.delete('/toy/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await ProductCollection.deleteOne(query)
+            res.send(result)
+        })
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
