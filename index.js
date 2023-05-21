@@ -5,7 +5,13 @@ const app = express()
 const port = process.env.PORT || 3000;
 
 // middleware
-app.use(cors());
+const corsConfig = {
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+}
+app.use(cors(corsConfig))
+app.options("", cors(corsConfig))
 app.use(express.json())
 
 
@@ -26,7 +32,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const tabsProductCollection = client.db('tabsDB').collection('tabsProducts')
 
@@ -36,7 +42,6 @@ async function run() {
             const result = await tabsProductCollection.find().toArray();
             res.send(result)
         })
-
         // add toy
         app.post('/addToy', async (req, res) => {
             const toy = req.body;
@@ -54,6 +59,7 @@ async function run() {
 
         // specific email get data
 
+
         app.get('/currentUD', async (req, res) => {
             let query = {}
             if (req.query?.sellerEmail) {
@@ -70,6 +76,7 @@ async function run() {
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };
             const updatedToy = req.body;
+
 
             const toy = {
                 $set: {
@@ -93,6 +100,7 @@ async function run() {
         })
 
         // view details
+
 
         app.get('/viewDetails/:id', async (req, res) => {
             const id = req.params.id;
@@ -127,10 +135,10 @@ async function run() {
 
 
         // create indexing
-        const indexKeys = { toyName: 1 };
-        const indexOptions = { name: "toyName" };
+        // const indexKeys = { toyName: 1 };
+        // const indexOptions = { name: "toyName" };
 
-        const result = await ProductCollection.createIndex(indexKeys, indexOptions);
+        // const result = await ProductCollection.createIndex(indexKeys, indexOptions);
 
         app.get('/toySearch/:text', async (req, res) => {
             const searchText = req.params.text
