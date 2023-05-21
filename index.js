@@ -44,12 +44,15 @@ async function run() {
             console.log(toy)
             res.send(result)
         })
-
+        // all toy 
         app.get('/allToy', async (req, res) => {
             const cursor = ProductCollection.find()
             const result = await cursor.toArray()
             res.send(result)
         })
+
+
+
 
         // specific email get data
 
@@ -61,6 +64,9 @@ async function run() {
             const result = await ProductCollection.find(query).toArray()
             res.send(result)
         })
+
+
+
 
         // my data update
         app.put('/toy/:id', async (req, res) => {
@@ -87,6 +93,44 @@ async function run() {
             const result = await ProductCollection.deleteOne(query)
             res.send(result)
         })
+
+        // view details
+
+        app.get('/viewDetails/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await ProductCollection.findOne(query)
+            res.send(result)
+        })
+
+
+
+
+
+        // Ascending toys
+        app.get('/ascendingToys', async (req, res) => {
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail };
+            }
+            const result = await ProductCollection.find(query).sort({ toyPrice: 1 }).toArray();
+            console.log(result);
+            res.send(result);
+        });
+
+        // Descending toys
+        app.get('/descendingToys', async (req, res) => {
+            let query = {};
+            if (req.query?.sellerEmail) {
+                query = { sellerEmail: req.query.sellerEmail };
+            }
+            const result = await ProductCollection.find(query).sort({ toyPrice: -1 }).toArray();
+            console.log(result);
+            res.send(result);
+        });
+
+
+
 
 
         // Send a ping to confirm a successful connection
