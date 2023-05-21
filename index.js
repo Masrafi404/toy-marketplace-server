@@ -109,16 +109,26 @@ async function run() {
             res.send(result)
         })
 
-        // Ascending toys
         app.get('/ascendingToys', async (req, res) => {
             let query = {};
             if (req.query?.sellerEmail) {
                 query = { sellerEmail: req.query.sellerEmail };
             }
-            const result = await ProductCollection.find(query).sort({ toyPrice: 1 }).toArray();
-            console.log(result);
-            res.send(result);
+            const result = await ProductCollection.find(query)
+                .sort({ toyPrice: 1 })
+                .toArray();
+
+            const sortedResult = result.map((product) => ({
+                ...product,
+                toyPrice: parseFloat(product.toyPrice),
+            }));
+
+            sortedResult.sort((a, b) => a.toyPrice - b.toyPrice);
+
+            console.log(sortedResult);
+            res.send(sortedResult);
         });
+
 
         // Descending toys
         app.get('/descendingToys', async (req, res) => {
@@ -126,9 +136,19 @@ async function run() {
             if (req.query?.sellerEmail) {
                 query = { sellerEmail: req.query.sellerEmail };
             }
-            const result = await ProductCollection.find(query).sort({ toyPrice: -1 }).toArray();
-            console.log(result);
-            res.send(result);
+            const result = await ProductCollection.find(query)
+                .sort({ toyPrice: -1 })
+                .toArray();
+
+            const sortedResult = result.map((product) => ({
+                ...product,
+                toyPrice: parseFloat(product.toyPrice),
+            }));
+
+            sortedResult.sort((a, b) => b.toyPrice - a.toyPrice);
+
+            console.log(sortedResult);
+            res.send(sortedResult);
         });
 
 
