@@ -126,6 +126,24 @@ async function run() {
 
 
 
+        // create indexing
+        const indexKeys = { toyName: 1 };
+        const indexOptions = { name: "toyName" };
+
+        const result = await ProductCollection.createIndex(indexKeys, indexOptions);
+
+        app.get('/toySearch/:text', async (req, res) => {
+            const searchText = req.params.text
+            const result = await ProductCollection.find({
+                $or: [
+                    { toyName: { $regex: searchText, $options: "i" } }
+                ],
+            }).toArray()
+            res.send(result)
+        })
+
+
+
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
