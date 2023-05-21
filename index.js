@@ -44,15 +44,13 @@ async function run() {
             console.log(toy)
             res.send(result)
         })
+
         // all toy 
         app.get('/allToy', async (req, res) => {
             const cursor = ProductCollection.find()
             const result = await cursor.toArray()
             res.send(result)
         })
-
-
-
 
         // specific email get data
 
@@ -64,8 +62,6 @@ async function run() {
             const result = await ProductCollection.find(query).toArray()
             res.send(result)
         })
-
-
 
 
         // my data update
@@ -85,6 +81,8 @@ async function run() {
             const result = await ProductCollection.updateOne(filter, toy, options);
             res.send(result);
         })
+
+
         // delete operation
 
         app.delete('/toy/:id', async (req, res) => {
@@ -102,10 +100,6 @@ async function run() {
             const result = await ProductCollection.findOne(query)
             res.send(result)
         })
-
-
-
-
 
         // Ascending toys
         app.get('/ascendingToys', async (req, res) => {
